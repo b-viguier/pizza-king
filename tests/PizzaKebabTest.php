@@ -5,26 +5,29 @@ namespace PizzaKing\Test;
 
 use PHPUnit\Framework\TestCase;
 use PizzaKing\Model\PizzaCreator;
+use PizzaKing\Model\PizzaKebab;
 
 final class PizzaKebabTest extends TestCase
 {
     public function testPizzaKebab(): void
     {
-        $pizza = PizzaCreator::createPizzaKebab();
+        $pizza = new PizzaKebab();
+        PizzaCreator::createPizzaKebab($pizza);
         $this->assertEquals(15, $pizza->getPrix());
 
         // Sans salade
-        $sansSalade = PizzaCreator::createPizzaKebab(false);
-        $this->assertEquals(14, $sansSalade->getPrix());
+        PizzaCreator::createPizzaKebab($pizza,false);
+        $this->assertEquals(14, $pizza->getPrix());
 
         // Sans oignon
-        $sansSalade = PizzaCreator::createPizzaKebab(true, true, false);
-        $this->assertEquals(13, $sansSalade->getPrix());
+        PizzaCreator::createPizzaKebab($pizza,true, true, false);
+        $this->assertEquals(13, $pizza->getPrix());
     }
 
     public function testPizzaKebabPourDenisse(): void
     {
-        $pizza = PizzaCreator::createPizzaKebab(true, true, true, 'PizzaKebabPourDenisse');
+        $pizza = new PizzaKebab();
+        PizzaCreator::createPizzaKebab($pizza,true, true, true, 'PizzaKebabPourDenisse');
         // Pas de viande !
         $this->assertNotContains('kebab', $pizza->getIngredientNames());
         $this->assertEquals(10, $pizza->getPrix());
@@ -35,6 +38,7 @@ final class PizzaKebabTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Partenariat inconnu');
 
-        PizzaCreator::createPizzaKebab(true, true, true, 'JeVeuxJusteUnKebab');
+        $p = new PizzaKebab();
+        PizzaCreator::createPizzaKebab($p, true, true, true, 'JeVeuxJusteUnKebab');
     }
 }

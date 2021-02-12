@@ -4,6 +4,10 @@ namespace PizzaKing\Model;
 
 use PizzaKing\Model\Fromage\Chevre;
 use PizzaKing\Model\Fromage\Mozzarella;
+use PizzaKing\Model\Kebab\Oignon;
+use PizzaKing\Model\Kebab\Salade;
+use PizzaKing\Model\Kebab\Tomate;
+use PizzaKing\Model\Kebab\ViandeKebab;
 use PizzaKing\Model\Sauce\SauceCreme;
 use PizzaKing\Model\Sauce\SauceTomate;
 use PizzaKing\Model\Viande\Jambon;
@@ -43,6 +47,8 @@ class PizzaCreator
         $fromage = null;
         $viandes = [];
 
+
+
         foreach ($ingredients as $ingredient) {
             switch ($ingredient) {
                 case 'sauce tomate':
@@ -63,6 +69,9 @@ class PizzaCreator
                 case 'pepperoni':
                     $viandes[] = new Pepperoni();
                     break;
+                case 'kebab':
+                    $viandes[] = new ViandeKebab();
+                    break;
                 default:
                     throw new \Exception("Ingrédient \"$ingredient\" inconnu au bataillon");
             }
@@ -78,9 +87,21 @@ class PizzaCreator
         return new PizzaClassique($sauce, $fromage, $viandes);
     }
 
-    public static function createPizzaKebab(bool $salade = true, bool $tomate = true, bool $oignon = true, string $codeClient = null): Pizza
+    public static function createPizzaKebab(Pizza &$return, bool $salade = true, bool $tomate = true, bool $oignon = true, string $codeClient = null)
     {
-        // TODO
-        return new PizzaClassique(new SauceTomate(), new Mozzarella(), []);
+        $return->__construct(
+            ...array_filter([
+                $salade ? new Salade() : null,
+                $oignon ? new Oignon() : null,
+                $tomate ? new Tomate() : null,
+                $codeClient === 'PizzaKebabPourDenisse' ? null : new Kebab\ViandeKebab(),
+            ])
+        );
+
+        if(null !== $codeClient) {
+            if($codeClient !== 'PizzaKebabPourDenisse') {
+                throw new \Exception('Partenariat inconnu');
+            }
+        }
     }
 }
